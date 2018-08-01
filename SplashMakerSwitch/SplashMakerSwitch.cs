@@ -74,7 +74,6 @@ namespace SplashMakerSwitch
                 {
                     for (int j = 0; (j < image.Height) && (k < (pixels.Count)); j++)
                     {
-                        Color pixel = image.GetPixel(i, j);
                         image.SetPixel(i, j, Color.FromArgb(255, pixels[k], pixels[k + 1], pixels[k + 2]));
                         k = k + 4;
                     }
@@ -92,6 +91,43 @@ namespace SplashMakerSwitch
             if (svf.ShowDialog() == DialogResult.OK)
             {
                 image.Save(svf.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            }
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog svf = new SaveFileDialog();
+            svf.Filter = "Saves As (*.bmp)|*.bmp";
+            if (svf.ShowDialog() == DialogResult.OK)
+            {
+                List<byte> pixels = new List<byte> { 66, 77, 70, 64, 56, 0, 0, 0, 0, 0, 70, 0, 0, 0, 56, 0, 0, 0, 208, 2, 0, 0, 0, 5, 0, 0, 1, 0, 32, 0, 3, 0, 0, 0, 0, 64, 56, 0, 35, 46, 0, 0, 35, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 0, 0, 255, 0, 0, 255, 0, 0, 0, 0, 0, 0, 0 };
+                for (int i = 0; i < image.Width; i++)
+                {
+                    for (int j = 0; j < image.Height; j++)
+                    {
+                        Color pixel = image.GetPixel(i, j);
+                        pixels.Add(pixel.B);
+                        pixels.Add(pixel.G);
+                        pixels.Add(pixel.R);
+                        pixels.Add(0);
+                    }
+                }
+                File.WriteAllBytes(svf.FileName, pixels.ToArray());
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog opf = new OpenFileDialog();
+            opf.Filter = "Choose Image (*.bmp)|*.bmp";
+            if (opf.ShowDialog() == DialogResult.OK)
+            {
+                Image import = new Bitmap(opf.FileName);
+                import.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                var graph = Graphics.FromImage(image);
+                graph.Clear(Color.Black);
+                graph.DrawImage(import, (image.Width - import.Width) / 2, (image.Height - import.Height) / 2, import.Width, import.Height);
+                PictureBox1.Image = image;
             }
         }
     }
